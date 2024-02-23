@@ -4,8 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Anchor
-  - PlayerWeapon
+  - Footsteps/Grass
+  - Footsteps/Stone
+  - Footsteps/Water
+  - Footsteps/Wood
   layers:
   - Default
   - TransparentFX
@@ -13,8 +15,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - PP
+  - Interactable
   - 
   - 
   - 
