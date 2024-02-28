@@ -1,11 +1,16 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Human : MonoBehaviour
 {
-    public float speed = 5.0f;
+    //public float speed = 5.0f;
     public float attackRange = 1.5f;
     public int attackDamage = 1;
     int health = 100;
+    public GameObject weaponRest;
+    public GameObject weaponCombat;
+    //public GameObject CombatPos;
 
     private Transform trollTransform;
     private bool isPlayerInRange = false;
@@ -15,80 +20,82 @@ public class Human : MonoBehaviour
     public float minimumImpactVelocity = 3.0f; // Requires a moderate throw speed to cause damage
     public float damageMultiplier = 1.5f; // Makes the damage somewhat higher than the impact speed
 
+    private Animator animator;
 
     void Start()
     {
         // player has a tag called "Player"
         troll = FindObjectOfType<Troll>();
         trollTransform = troll.transform;
-        
+        animator = GetComponent<Animator>();
+        //ai navigation
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        agent.destination = trollTransform.position;
+
+        weaponRest.SetActive(true);
+        weaponCombat.SetActive(false);
+        //StartCoroutine(EverySecond());
     }
 
-    void Update()
-    {
-        MoveTowardsPlayer();
-        if (isPlayerInRange)
-        {
-            AttackPlayer();
-        }
+    // IEnumerator EverySecond(){
+    //     if (isPlayerInRange) AttackPlayer();
+    //     else MoveTowardsPlayer();
+    //     yield return new WaitForSeconds(0.5f);
+    // }
+    
 
-        if (health == 0){
-            Die();
-        }
+   void FixedUpdate(){
+        
+        if (isPlayerInRange) AttackPlayer();
+        else MoveTowardsPlayer();
+        if (health == 0) Die();  
     }
 
-    void MoveTowardsPlayer()
-    {
-        float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, trollTransform.position, step);
-        
+    void MoveTowardsPlayer(){
+
+        animator.SetBool("isRunning", true);
         // Check if the player is within the attack range
-        if (Vector3.Distance(transform.position, trollTransform.position) < attackRange)
-        {
+        if (Vector3.Distance(transform.position, trollTransform.position) < attackRange){
             isPlayerInRange = true;
-        }
-        else
-        {
+            animator.SetBool("inRange", true);    
+        } else{
             isPlayerInRange = false;
+            animator.SetBool("inRange", false);
         }
     }
 
-    void AttackPlayer()
-    {
-        //Debug.Log("Attacking player with damage: " + attackDamage);
-        // Here add the logic to decrease the player's health
-        // For example, playerHealth.TakeDamage(attackDamage);
+    void AttackPlayer(){
+        weaponRest.SetActive(false);
+        weaponCombat.SetActive(true);
+        animator.SetBool("isAttacking", true);
         troll.TakeDamage(attackDamage);
+        // attack
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
+    void OnCollisionEnter(Collision collision){
         // Check if the collision is with the player's weapon
         if (collision.gameObject.tag == "PlayerWeapon")
         {
             Die();
         }
-
-    
         // Ensure this collision is from a throw and not just any collision
         if (collision.relativeVelocity.magnitude > minimumImpactVelocity)
         {
             int damage = Mathf.FloorToInt(collision.relativeVelocity.magnitude * damageMultiplier);
             TakeDamage(damage);
         }
-
-
     }
 
     void Die() {
         Debug.Log("Enemy died.");
+        animator.SetBool("isDead", true);
         // Destroy the enemy GameObject
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 
     public void TakeDamage (int damage){
         if (health > 0) health = health - damage;
         else Die();
-        Debug.Log("Enemy health " + health);
+        //Debug.Log("Enemy health " + health);
     }
 }
