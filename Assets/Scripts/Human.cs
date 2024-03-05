@@ -5,7 +5,7 @@ using UnityEngine.AI;
 public class Human : MonoBehaviour
 {
     //public float speed = 5.0f;
-    public float attackRange = 1.5f;
+    public float attackRange = 4f;
     public int attackDamage = 1;
     int health = 100;
     public GameObject weaponRest;
@@ -31,6 +31,8 @@ public class Human : MonoBehaviour
         //ai navigation
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         agent.destination = trollTransform.position;
+        agent.stoppingDistance = 3f;
+
 
         weaponRest.SetActive(true);
         weaponCombat.SetActive(false);
