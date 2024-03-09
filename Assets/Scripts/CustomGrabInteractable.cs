@@ -39,7 +39,7 @@ public class CustomGrabInteractable : XRGrabInteractable
 
     void StopHapticFeedback(XRBaseInteractor interactor)
     {
-        // Optionally stop feedback when the object is released
+
         if (interactor is XRDirectInteractor)
         {
             var device = interactor.GetComponent<XRController>().inputDevice;
@@ -60,5 +60,5 @@ public class CustomGrabInteractable : XRGrabInteractable
         }
     }
 
-    public float throwStrength = 5.0f; // Adjust as needed
+    public float throwStrength = 5.0f; // Adjust 
 }

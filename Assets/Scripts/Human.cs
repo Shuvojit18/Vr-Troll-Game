@@ -5,7 +5,7 @@ using UnityEngine.AI;
 public class Human : MonoBehaviour
 {
     //public float speed = 5.0f;
-    public float attackRange = 1.5f;
+    public float attackRange = 4f;
     public int attackDamage = 1;
     int health = 100;
     public GameObject weaponRest;
@@ -14,6 +14,7 @@ public class Human : MonoBehaviour
 
     private Transform trollTransform;
     private bool isPlayerInRange = false;
+    bool doOnce = true;
 
     Troll troll;
 
@@ -31,26 +32,22 @@ public class Human : MonoBehaviour
         //ai navigation
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         agent.destination = trollTransform.position;
+        agent.stoppingDistance = 3f;
+
 
         weaponRest.SetActive(true);
         weaponCombat.SetActive(false);
-        //StartCoroutine(EverySecond());
+        StartCoroutine(EverySecond());
     }
 
-    // IEnumerator EverySecond(){
-    //     if (isPlayerInRange) AttackPlayer();
-    //     else MoveTowardsPlayer();
-    //     yield return new WaitForSeconds(0.5f);
-    // }
+    IEnumerator EverySecond(){
+        while(health>0){
+            if (isPlayerInRange) AttackPlayer();
+            else MoveTowardsPlayer();
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
     
-
-   void FixedUpdate(){
-        
-        if (isPlayerInRange) AttackPlayer();
-        else MoveTowardsPlayer();
-        if (health == 0) Die();  
-    }
-
     void MoveTowardsPlayer(){
 
         animator.SetBool("isRunning", true);
@@ -76,7 +73,7 @@ public class Human : MonoBehaviour
         // Check if the collision is with the player's weapon
         if (collision.gameObject.tag == "PlayerWeapon")
         {
-            Die();
+            TakeDamage(50);
         }
         // Ensure this collision is from a throw and not just any collision
         if (collision.relativeVelocity.magnitude > minimumImpactVelocity)
@@ -87,15 +84,25 @@ public class Human : MonoBehaviour
     }
 
     void Die() {
-        Debug.Log("Enemy died.");
-        animator.SetBool("isDead", true);
-        // Destroy the enemy GameObject
-        //Destroy(gameObject);
+        if(doOnce){
+            Debug.Log("Enemy died.");
+            animator.SetBool("isDead", true);
+            animator.SetBool("isAttacking", false);
+            animator.SetBool("inRange", false);
+            animator.SetBool("isRunning", false);
+            doOnce = false;
+            Invoke("Disappear", 20.0f);
+        }
     }
 
     public void TakeDamage (int damage){
         if (health > 0) health = health - damage;
         else Die();
+        Debug.Log(health);
         //Debug.Log("Enemy health " + health);
+    }
+
+    void Disappear(){
+        Destroy(gameObject);
     }
 }

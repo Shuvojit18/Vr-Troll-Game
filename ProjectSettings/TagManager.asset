@@ -8,6 +8,9 @@ TagManager:
   - Footsteps/Stone
   - Footsteps/Water
   - Footsteps/Wood
+  - PlayerWeapon
+  - PlayerHand
+  - Weapon
   layers:
   - Default
   - TransparentFX
