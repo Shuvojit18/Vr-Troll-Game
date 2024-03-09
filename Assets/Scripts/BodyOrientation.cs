@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BodyOrientation : MonoBehaviour
 {
-    public Transform vrHeadset; // Assign this to your VR headset's transform in the inspector
+    public Transform vrHeadset; // Assign 
 
     void Update()
     {

@@ -43,7 +43,7 @@ public class DebugDisplay : MonoBehaviour
     void HandleLog(string logString, string stackTrace, LogType type)
     {
         debugText = logString + "\n" + debugText;
-        // Optional: limit the number of logged messages to keep the display manageable
+        // limit the number of logged messages to keep the display manageable
         if(debugText.Length > 5000)
         {
             debugText = debugText.Substring(0, 5000);
@@ -55,15 +55,6 @@ public class DebugDisplay : MonoBehaviour
             debugTextUI.text = debugText;
         }
     }
-
-    // void OnGUI()
-    // {
-    //     if (!showDisplay) return;
-
-    //     // Display the debugText on the screen. Adjust style and position as needed.
-    //     GUI.TextArea(new Rect(90, 10, Screen.width - 20, Screen.height - 20), debugText);
-    // }
-
     // Call this method to toggle the display on and off.
     public void ToggleDisplay()
     {
